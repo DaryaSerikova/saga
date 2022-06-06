@@ -105,13 +105,14 @@ export default function* rootSaga() {\
 
 Аналогично 1 и 2 способу. Фейлится один, ломается все.\
 
-```export default function* rootSaga() {
+```
+export default function* rootSaga() {
   yield fork(saga1); //auth
   yield fork(saga2); //users
   yield fork(saga3); //payments
   //code
-```}
-
+}
+```
 
 ### 4 способ (предпочтительный)
 
