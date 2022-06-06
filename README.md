@@ -30,9 +30,9 @@
 
 ### select
 Получить данные из store. Аналог useSelect/mapStateToProps.
-
+```
 const store = yield select(s => s);\
-
+```
 Так как select - неблокирующий эффект, мы получим store на момент выполнения кода (при использовании fork). Если хочется получить store после загрузки данных, тогда нужно заменить fork на call.\ 
 
 ### cancel
@@ -50,7 +50,7 @@ const store = yield select(s => s);\
 Мы рассмотрим 5 способов запустить саги, но самыми предпочтительными являются 4 и 5 способ.
 
 Подготовим почву для примера. Возьмем необходимые функции и создадим бутофорные саги, которые нам нужно будет запустить.
-
+```
 import { all, call, fork, spawn } from 'redux-saga/effects';
 
 
@@ -63,7 +63,7 @@ export function* saga2() {
 export function* saga3() {
   console.log('Saga 3');
 }
-
+```
 ### 1 способ
 
 Все три саги запустятся парраллельно.
@@ -72,16 +72,16 @@ export function* saga3() {
 Если хоть в одной из саг произойдет ошибка, то все последующие
 процессы будут отменены и сама rootSaga больше не будет выполняться. Она тоже будет отменена и придальнейшем вызове ничего происходить не будет.
 
-
-`export default function* rootSaga() {
+```
+export default function* rootSaga() {
   yield [
     saga1(),
     saga2(),
     saga3(),
   ]
   //code
-}`
-
+}
+```
 
 ### 2 способ
 
@@ -90,16 +90,16 @@ export function* saga3() {
 Если хоть одна из саг зафейлится, то все остальные будут отменены и сама задача тоже будет отменена.\
 Разница между 1 и 2 способом только в том, что code 
 в rootSag'е будет выполнен сразу же.\
-
+```
 export default function* rootSaga() {\
   yield [\
-    fork(saga1),\
-    fork(saga2),\
-    fork(saga3),\
-  ]\
-  //code\
-}\
-
+    fork(saga1),
+    fork(saga2),
+    fork(saga3),
+  ]
+  //code
+}
+```
 
 ### 3 способ
 
@@ -115,7 +115,7 @@ export default function* rootSaga() {
 ```
 
 ### 4 способ (предпочтительный)
-
+```
 export default function* rootSaga() {
 
   yield spawn(saga1); //auth
@@ -123,12 +123,12 @@ export default function* rootSaga() {
   yield spawn(saga3); //payments
   //code
 }
-
+```
 ### 5 способ
 
 Случай, если нужно автоматически restart'овать саги в случае, если в них произошла ошибка и при этом не обрабатывать ошибку в каждой саге отдельно.\
 
-
+```
 export default function* rootSaga() {
 
   const sagas = [saga1, saga2, saga3];
@@ -149,7 +149,7 @@ export default function* rootSaga() {
   yield all(retrySagas);
   //code 
 }
-
+```
 ## Как описывать доменную логику
 
 У нас бывает несколько типов запросов.
