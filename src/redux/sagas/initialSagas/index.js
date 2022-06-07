@@ -11,7 +11,7 @@ function* auth() {
 }
 
 function* loadUsers() {
-  const request = yield call(fetch, `https://swapi.dev/api/people/1/`)
+  const request = yield call(fetch, `https://swapi.dev/api/people`)
   const data = yield call([request, request.json]) //yield call(request.json.bind(request))
   // call может принимать массив, у которого первый аргумент 
   // это контекст и имя функции (метод)
@@ -19,7 +19,7 @@ function* loadUsers() {
   console.log('data', data);
 }
 
-export function* loadBasicData() {
+export default function* loadBasicData() {
   yield all([
     fork(auth),
     fork(loadUsers)

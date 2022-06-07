@@ -1,5 +1,6 @@
 import { all, call, fork, spawn, delay } from 'redux-saga/effects';
-import { loadBasicData } from './initialSagas';
+import loadBasicData from './initialSagas';
+import pageLoaderSaga from './pageLoaderSaga';
 
 // function* auth() {
 //   yield delay(2000);
@@ -27,7 +28,10 @@ import { loadBasicData } from './initialSagas';
 
 export default function* rootSaga() {
 
-  const sagas = [loadBasicData];
+  const sagas = [
+    loadBasicData,
+    pageLoaderSaga
+  ];
 
   const retrySagas = yield sagas.map((saga) => {
     return spawn(function*() {
