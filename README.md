@@ -244,6 +244,128 @@ export function* loadBasicData() {
 
 
 
+## dispatch, store и хуки
+Для начала достанем dispatch
+```
+import { useDispatch, useSelector } from "react-redux";
+
+
+const dispatch = useDispatch();
+
+// вызов store из Provider (обычно вызывается кусок store)
+const store = useSelector(store => store);
+
+console.log(store);
+```
+```
+<button
+  onClick={() => dispatch({type: 'LOAD_DATA'})}
+>click me</button>
+```
+
+## Загрука данных с комментариями
+```
+function* loadUsers() {
+  const request = yield call(fetch, `https://swapi.dev/api/people`)
+  const data = yield call([request, request.json]) //yield call(request.json.bind(request))
+  // call может принимать массив, у которого первый аргумент 
+  // это контекст и имя функции (метод)
+
+  console.log('data', data);
+}
+```
+
+## Кусок из первого урока. Ненужный на данный момент
+
+```
+const initial = {
+  people: [],
+  planets: []
+};
+
+export default function reducer(state = initial, action) {
+  switch (action.type) {
+
+    case 'SET_PEOPLE': {
+      return {
+        ...state,
+        people: [
+          ...state.people,
+          ...action.payload
+        ]
+      }
+    }
+
+    case 'SET_PLANETS': {
+      return {
+        ...state,
+        planets: [
+          ...state.planets,
+          ...action.payload
+        ]
+      }
+    }
+
+    default:
+      return state;
+  }
+}
+```
+
+## Еще один такой кусок
+
+```
+import { takeEvery, put, call, fork, spawn, join, select
+  // take, takeLatest, takeLeading 
+} from 'redux-saga/effects';
+
+// const wait = (t) => new Promise((resolve => {
+//   setTimeout(resolve, t)
+// }))
+
+async function swapiGet(pattern) {
+  const request = await fetch(`https://swapi.dev/api/${pattern}`) //'https://swapi.dev/api/people/'
+
+  const data = await request.json();
+
+  return data;
+}
+
+
+
+export function* loadPeople() {
+  // throw new Error(); 
+  const people = yield call(swapiGet, 'people'); 
+  yield put({type: 'SET_PEOPLE', payload: people.results}); // это dispatch
+  console.log('load people!');
+}
+
+export function* loadPlanets() {
+  const planets = yield call(swapiGet, 'planets'); 
+  yield put({type: 'SET_PLANETS', payload: planets.results}); // это dispatch
+  console.log('load planets!');
+}
+
+
+
+export function* workerSaga() {
+  console.log('run parallel tasks');
+  yield spawn(loadPeople);
+  yield spawn(loadPlanets);
+  console.log('finish parallel tasks');
+}
+
+export function* watchLoadDataSaga() {
+  // На каждый CLICK мы будем вызывать workerSaga:
+  // yield takeEvery('CLICK', workerSaga);
+  yield takeEvery('LOAD_DATA', workerSaga);
+
+}
+
+export default function* rootSaga() {
+  yield fork(watchLoadDataSaga);
+}
+```
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.

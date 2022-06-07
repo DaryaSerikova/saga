@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-// import { Routes, Route } from 'react-router';
 import { Router } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
@@ -19,15 +18,19 @@ root.render(
     <Provider store={store}>
       <Router history={history}>
         <Switch>
+
           <Route path='/' exact>
             <App />
           </Route>
+
           <Route path='/blog' exact>
             <Blog />
           </Route>
+
           <Route path='*'>
             <NotFound />
           </Route>
+          
         </Switch>
       </Router>
     </Provider>
